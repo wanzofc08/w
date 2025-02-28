@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANZOFC PAYMENT</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background-color: #000;
+            overflow-x: hidden; 
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .payment-card {
+            transition: all .3s ease;
+        }
+
+        .payment-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .3);
+            transform: translateY(-3px)
+        }
+
+        .parallax {
+            position: relative;
+            overflow: hidden;
+            height: 300px; 
+        }
+
+        .parallax-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('parallax-bg.jpg'); 
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            transform: translateZ(-1px) scale(1.5);
+        }
+        .social-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .social-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-card a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .social-card i {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+    <div id="root"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>window.axios=axios.create({baseURL:"https://api.example.com",timeout:1e4,headers:{"Content-Type":"application/json"}})</script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script>window._=_</script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script type="text/babel">
+        gsap.registerPlugin(ScrollTrigger);
+
+        function PaymentCard(props) {
+            return (
+                <div className="payment-card bg-gray-800 rounded-lg shadow-md p-4 mb-4 flex items-center justify-between hover:scale-105 transition-transform duration-300 ease-in-out">
+                    <img src={props.icon} alt={props.method} className="w-8 h-8 mr-4" />
+                    <div className="flex-grow">
+                        <h3 className="font-semibold text-white">{props.method}</h3>
+                        <p className="text-gray-400">{props.number}</p>
+                    </div>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline copy-button" onClick={(e) => copyToClipboard(props.number, e.target)}>
+                        <i className="fas fa-copy mr-1"></i> Copy
+                    </button>
+                </div>
+            )
+        }
+
+        function SocialCard(props) {
+            return (
+                <div className="social-card">
+                    <a href={props.link} target="_blank" rel="noopener noreferrer">
+                        <i className={props.iconClass}></i>
+                        {props.title}
+                    </a>
+                </div>
+            );
+        }
+
+        function App() {
+            const paymentMethods = [
+                { method: 'DANA', number: '0895402567224', icon: 'dana-icon.png' },
+                { method: 'OVO', number: '0895402567224', icon: 'ovo-icon.png' },
+                { method: 'GOPAY', number: '0895402567224', icon: 'gopay-icon.png' }
+            ];
+
+            return (
+                <div className="container mx-auto px-4 py-8 relative" style={{zIndex:1}}>
+                    <header className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-blue-400"><i className="fas fa-wallet mr-2"></i> PAYMENT WANZOFC</h1>
+                        <p className="text-white text-lg"><i className="fas fa-server mr-2"></i>all payment</p>
+                    </header>
+                    <section id="payment-methods">
+                        <h2 className="text-xl font-semibold mb-4 text-white">payment method</h2>
+                        {paymentMethods.map(method => (
+                            <PaymentCard key={method.method} method={method.method} number={method.number} icon={method.icon} />
+                        ))}
+                    </section>
+                     <div className="parallax">
+                        <div className="parallax-background"></div>
+                    </div>
+                     <section id="social-media" className="mt-8">
+                        <h2 className="text-xl font-semibold mb-4 text-white">find us on social media</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <SocialCard title="Instagram" link="https://www.instagram.com/wanz_brayy" iconClass="fab fa-instagram" />
+                            <SocialCard title="TikTok" link="https://www.tiktok.com/@wanzofc" iconClass="fab fa-tiktok" />
+                            <SocialCard title="WhatsApp" link="https://wa.me/62895402567224" iconClass="fab fa-whatsapp" />
+                        </div>
+                    </section>
+
+                    <footer className="text-center mt-8">
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4"><i className="fas fa-qrcode mr-1"></i> Scan QR & Info</button>
+                        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"><i className="fas fa-qrcode mr-1"></i> SCAN QR ALL PAY KAIZELOFFC</button>
+                    </footer>
+                </div>
+            );
+        }
+        ReactDOM.render(<App />, document.getElementById('root'));
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    gsap.to(button, {
+                        duration: 0.3,
+                        innerHTML: '<i class="fas fa-check-circle mr-2"></i> Copied!',
+                        backgroundColor: "#4CAF50",
+                        onComplete: () => {
+                            gsap.to(button, {
+                                duration: 0.3,
+                                innerHTML: '<i className="fas fa-copy mr-1"></i> Copy',
+                                backgroundColor: "#3b82f6"
+                            });
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error('Gagal menyalin: ', err);
+                    alert('Gagal menyalin nomor rekening.');
+                });
+      }
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#00ffff" },
+                shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 }, image: { src: "img/github.svg", width: 100, height: 100 } },
+                opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+                size: { value: 5, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+                line_linked: { enable: true, distance: 150, color: "#00ffff", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, direction: "none", random: false, straight: false, out_mode: "out", attract: { enable: false, rotateX: 600, rotateY: 1200 } }
+            },
+            interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true }, modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } } },
+            retina_detect: true,
+            config_demo: { hide_card: false, background_color: "#b61924", background_image: "", background_position: "50% 50%", background_repeat: "no-repeat", background_size: "cover" }
+        });
+        gsap.to(".parallax-background", {
+            scrollTrigger: {
+                trigger: ".parallax",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            },
+            yPercent: 50, 
+            ease: "none"
+        });
+    </script>
+</body>
+</html>
