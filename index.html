@@ -201,12 +201,10 @@
             ];
 
             const galleryImages = [
-                { imageUrl: 'image1.jpg', title: 'Image 1' }, // Replace with your image paths
+                { imageUrl: 'https://files.catbox.moe/hcnl58.jpg', title: 'Image 1' }, // Replace with your image paths
                 { imageUrl: 'image2.jpg', title: 'Image 2' },
                 { imageUrl: 'image3.jpg', title: 'Image 3' },
             ];
-
-            // Simulate notifications (replace with your actual logic)
             React.useEffect(() => {
                 showNotification('Welcome to WANZOFC Payment!');
                 setTimeout(() => showNotification('New payment methods added!'), 5000);
@@ -218,18 +216,14 @@
                 notification.className = 'notification';
                 notification.textContent = message;
                 container.appendChild(notification);
-
-                // Animate the notification in
                 setTimeout(() => {
                     notification.classList.add('show');
                 }, 10);
-
-                // Remove the notification after a delay
                 setTimeout(() => {
                     notification.classList.remove('show');
                     setTimeout(() => {
                         container.removeChild(notification);
-                    }, 300); // Wait for the fade-out transition
+                    }, 300);
                 }, 5000);
             };
 
