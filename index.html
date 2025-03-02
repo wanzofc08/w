@@ -6,12 +6,13 @@
     <title>WANZOFC PAYMENT</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.14.1/css/lightbox.min.css">
     <style>
         body {
             font-family: sans-serif;
             margin: 0;
             background-color: #000;
-            overflow-x: hidden; 
+            overflow-x: hidden;
         }
 
         #particles-js {
@@ -35,7 +36,7 @@
         .parallax {
             position: relative;
             overflow: hidden;
-            height: 300px; 
+            height: 400px; /* Increased height */
         }
 
         .parallax-background {
@@ -43,13 +44,28 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-image: url('parallax-bg.jpg'); 
+            height: 150%; /* Increased height to ensure full cover */
+            background-image: url('parallax-bg.jpg'); /* Replace with your image */
             background-size: cover;
             background-position: center;
             z-index: -1;
             transform: translateZ(-1px) scale(1.5);
         }
+
+        /* Add second parallax layer */
+        .parallax-foreground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('parallax-foreground.png'); /* Replace with a different image */
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            transform: translateZ(0.5px) scale(0.5);
+        }
+
         .social-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
@@ -75,12 +91,56 @@
             font-size: 2em;
             margin-bottom: 10px;
         }
+
+        .gallery-item {
+            margin-bottom: 15px;
+            overflow: hidden; /* Ensure rounded corners work */
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Notification styling (basic) */
+        #notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .notification {
+            background-color: rgba(0, 123, 255, 0.8); /* Blue background */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
 
     <div id="particles-js"></div>
     <div id="root"></div>
+    <div id="notification-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
@@ -92,6 +152,7 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.14.1/js/lightbox.min.js"></script>
 
     <script type="text/babel">
         gsap.registerPlugin(ScrollTrigger);
@@ -122,12 +183,56 @@
             );
         }
 
+        function GalleryItem(props) {
+            return (
+                <div className="gallery-item">
+                    <a href={props.imageUrl} data-lightbox="gallery" data-title={props.title}>
+                        <img src={props.imageUrl} alt={props.title} />
+                    </a>
+                </div>
+            );
+        }
+
         function App() {
             const paymentMethods = [
                 { method: 'DANA', number: '0895402567224', icon: 'dana-icon.png' },
                 { method: 'OVO', number: '0895402567224', icon: 'ovo-icon.png' },
                 { method: 'GOPAY', number: '0895402567224', icon: 'gopay-icon.png' }
             ];
+
+            const galleryImages = [
+                { imageUrl: 'image1.jpg', title: 'Image 1' }, // Replace with your image paths
+                { imageUrl: 'image2.jpg', title: 'Image 2' },
+                { imageUrl: 'image3.jpg', title: 'Image 3' },
+            ];
+
+            // Simulate notifications (replace with your actual logic)
+            React.useEffect(() => {
+                showNotification('Welcome to WANZOFC Payment!');
+                setTimeout(() => showNotification('New payment methods added!'), 5000);
+            }, []);
+
+            const showNotification = (message) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                container.appendChild(notification);
+
+                // Animate the notification in
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+
+                // Remove the notification after a delay
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        container.removeChild(notification);
+                    }, 300); // Wait for the fade-out transition
+                }, 5000);
+            };
+
 
             return (
                 <div className="container mx-auto px-4 py-8 relative" style={{zIndex:1}}>
@@ -141,9 +246,21 @@
                             <PaymentCard key={method.method} method={method.method} number={method.number} icon={method.icon} />
                         ))}
                     </section>
-                     <div className="parallax">
+
+                    <section id="gallery" className="mt-8">
+                        <h2 className="text-xl font-semibold mb-4 text-white">Gallery</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {galleryImages.map(image => (
+                                <GalleryItem key={image.title} imageUrl={image.imageUrl} title={image.title} />
+                            ))}
+                        </div>
+                    </section>
+
+                    <div className="parallax mt-8">
                         <div className="parallax-background"></div>
+                        <div className="parallax-foreground"></div> {/* Second parallax layer */}
                     </div>
+
                      <section id="social-media" className="mt-8">
                         <h2 className="text-xl font-semibold mb-4 text-white">find us on social media</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -203,7 +320,18 @@
                 end: "bottom top",
                 scrub: true
             },
-            yPercent: 50, 
+            yPercent: 50,
+            ease: "none"
+        });
+
+        gsap.to(".parallax-foreground", {  // Animate the foreground layer too!
+            scrollTrigger: {
+                trigger: ".parallax",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            },
+            yPercent: 20,  // Adjust this value to control the speed relative to the background
             ease: "none"
         });
     </script>
