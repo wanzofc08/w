@@ -196,9 +196,12 @@
     </style>
 </head>
 <body>
+
     <div id="particles-js"></div>
     <div id="root"></div>
     <div id="notification-container"></div>
+
+    <!-- Modals -->
     <div id="imageModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -252,11 +255,12 @@
                         <p className="text-gray-400">{props.number}</p>
                     </div>
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline copy-button" onClick={(e) => copyToClipboard(props.number, e.target)}>
-                        <i className="fas fa-copy mr-1"></i> 
+                        <i className="fas fa-copy mr-1"></i> Copy
                     </button>
                 </div>
             )
         }
+
         function SocialCard(props) {
             return (
                 <div className="social-card">
@@ -295,8 +299,8 @@
             ];
 
             React.useEffect(() => {
-                showNotification('welcome to wanzofc payment!');
-                setTimeout(() => showNotification('new payment methods added!'), 5000);
+                showNotification('Welcome to WANZOFC Payment!');
+                setTimeout(() => showNotification('New payment methods added!'), 5000);
             }, []);
 
             const showNotification = (message) => {
@@ -315,9 +319,11 @@
                     }, 300);
                 }, 5000);
             };
+
             const openQrModal = () => {
                 document.getElementById('qrModal').style.display = "block";
             };
+
             return (
                 <div className="container mx-auto px-4 py-8 relative" style={{zIndex:1}}>
                     <header className="text-center mb-8">
@@ -342,22 +348,26 @@
                         <div className="parallax-background"></div>
                         <div className="parallax-foreground"></div>
                     </div>
+
                      <section id="social-media" className="mt-8">
                         <h2 className="text-xl font-semibold mb-4 text-white">find us on social media</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <SocialCard title="Instagram" link="https://www.instagram.com/wanzofc" iconClass="fab fa-instagram" />
+                            <SocialCard title="Instagram" link="https://www.instagram.com/wanz_brayy" iconClass="fab fa-instagram" />
                             <SocialCard title="TikTok" link="https://www.tiktok.com/@wanzofc" iconClass="fab fa-tiktok" />
                             <SocialCard title="WhatsApp" link="https://wa.me/62895402567224" iconClass="fab fa-whatsapp" />
                         </div>
                     </section>
+
                     <footer className="text-center mt-8">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4" onClick={openQrModal}><i className="fas fa-qrcode mr-1"></i> ALL PAYMENT</button>
-                        
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4" onClick={openQrModal}><i className="fas fa-qrcode mr-1"></i> Scan QR & Info</button>
+                        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"><i className="fas fa-qrcode mr-1"></i> ONLY WANZOFC</button>
                     </footer>
                 </div>
             );
         }
+
         ReactDOM.render(<App />, document.getElementById('root'));
+
         function copyToClipboard(text, button) {
             navigator.clipboard.writeText(text)
                 .then(() => {
@@ -416,7 +426,8 @@
             yPercent: 20,
             ease: "none"
         });
-)
+
+        // Modal Handling (Outside React Component)
         const imageModal = document.getElementById("imageModal");
         const qrModal = document.getElementById("qrModal");
         const imageModalClose = document.getElementById("imageModalClose");
