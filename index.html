@@ -6,7 +6,6 @@
     <title>WANZOFC PAYMENT</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.14.1/css/lightbox.min.css">
     <style>
         body {
             font-family: sans-serif;
@@ -36,7 +35,7 @@
         .parallax {
             position: relative;
             overflow: hidden;
-            height: 400px; /* Increased height */
+            height: 400px;
         }
 
         .parallax-background {
@@ -44,22 +43,21 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 150%; /* Increased height to ensure full cover */
-            background-image: url('parallax-bg.jpg'); /* Replace with your image */
+            height: 150%;
+            background-image: url('parallax-bg.jpg');
             background-size: cover;
             background-position: center;
             z-index: -1;
             transform: translateZ(-1px) scale(1.5);
         }
 
-        /* Add second parallax layer */
         .parallax-foreground {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('parallax-foreground.png'); /* Replace with a different image */
+            background-image: url('parallax-foreground.png');
             background-size: cover;
             background-position: center;
             z-index: 1;
@@ -94,9 +92,10 @@
 
         .gallery-item {
             margin-bottom: 15px;
-            overflow: hidden; /* Ensure rounded corners work */
+            overflow: hidden;
             border-radius: 8px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer; /* Make it look clickable */
         }
 
         .gallery-item:hover {
@@ -110,6 +109,66 @@
             display: block;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8); /* Dark background */
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px; /* Adjust as needed */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+
+        /* Add Animation */
+        @keyframes animatetop {
+            from {top:-300px; opacity:0}
+            to {top:0; opacity:1}
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-header {
+            padding: 2px 16px;
+            background-color: #5cb85c; /* Green header */
+            color: white;
+        }
+
+        .modal-body {padding: 2px 16px;}
+
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: #5cb85c; /* Green footer */
+            color: white;
+        }
+
         /* Notification styling (basic) */
         #notification-container {
             position: fixed;
@@ -119,7 +178,7 @@
         }
 
         .notification {
-            background-color: rgba(0, 123, 255, 0.8); /* Blue background */
+            background-color: rgba(0, 123, 255, 0.8);
             color: white;
             padding: 15px;
             border-radius: 5px;
@@ -137,10 +196,38 @@
     </style>
 </head>
 <body>
-
     <div id="particles-js"></div>
     <div id="root"></div>
     <div id="notification-container"></div>
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" id="imageModalClose">×</span>
+                <h2>Image</h2>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Modal Image" style="width:100%;">
+            </div>
+            <div class="modal-footer">
+                <h3>WANZOFC</h3>
+            </div>
+        </div>
+    </div>
+
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" id="qrModalClose">×</span>
+                <h2>QR Code & Info</h2>
+            </div>
+            <div class="modal-body">
+                <img src="qr-code.png" alt="QR Code" style="width:100%;">
+            </div>
+            <div class="modal-footer">
+                <h3>WANZOFC</h3>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
@@ -152,7 +239,6 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.14.1/js/lightbox.min.js"></script>
 
     <script type="text/babel">
         gsap.registerPlugin(ScrollTrigger);
@@ -166,12 +252,11 @@
                         <p className="text-gray-400">{props.number}</p>
                     </div>
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline copy-button" onClick={(e) => copyToClipboard(props.number, e.target)}>
-                        <i className="fas fa-copy mr-1"></i> Copy
+                        <i className="fas fa-copy mr-1"></i> 
                     </button>
                 </div>
             )
         }
-
         function SocialCard(props) {
             return (
                 <div className="social-card">
@@ -184,11 +269,14 @@
         }
 
         function GalleryItem(props) {
+            const handleClick = () => {
+                document.getElementById('modalImage').src = props.imageUrl;
+                document.getElementById('imageModal').style.display = "block";
+            };
+
             return (
-                <div className="gallery-item">
-                    <a href={props.imageUrl} data-lightbox="gallery" data-title={props.title}>
-                        <img src={props.imageUrl} alt={props.title} />
-                    </a>
+                <div className="gallery-item" onClick={handleClick}>
+                    <img src={props.imageUrl} alt={props.title} />
                 </div>
             );
         }
@@ -201,10 +289,11 @@
             ];
 
             const galleryImages = [
-                { imageUrl: 'https://files.catbox.moe/hcnl58.jpg', title: 'Image 1' }, // Replace with your image paths
+                { imageUrl: 'https://files.catbox.moe/hcnl58.jpg', title: 'Image 1' },
                 { imageUrl: 'https://files.catbox.moe/m8k5yx.jpg', title: 'Image 2' },
                 { imageUrl: 'https://files.catbox.moe/bywecn.jpg', title: 'Image 3' },
             ];
+
             React.useEffect(() => {
                 showNotification('welcome to wanzofc payment!');
                 setTimeout(() => showNotification('new payment methods added!'), 5000);
@@ -225,6 +314,9 @@
                         container.removeChild(notification);
                     }, 300);
                 }, 5000);
+            };
+            const openQrModal = () => {
+                document.getElementById('qrModal').style.display = "block";
             };
             return (
                 <div className="container mx-auto px-4 py-8 relative" style={{zIndex:1}}>
@@ -248,21 +340,19 @@
                     </section>
                     <div className="parallax mt-8">
                         <div className="parallax-background"></div>
-                        <div className="parallax-foreground"></div> {/* Second parallax layer */}
+                        <div className="parallax-foreground"></div>
                     </div>
-
                      <section id="social-media" className="mt-8">
                         <h2 className="text-xl font-semibold mb-4 text-white">find us on social media</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <SocialCard title="Instagram" link="https://www.instagram.com/wanz_brayy" iconClass="fab fa-instagram" />
+                            <SocialCard title="Instagram" link="https://www.instagram.com/wanzofc" iconClass="fab fa-instagram" />
                             <SocialCard title="TikTok" link="https://www.tiktok.com/@wanzofc" iconClass="fab fa-tiktok" />
                             <SocialCard title="WhatsApp" link="https://wa.me/62895402567224" iconClass="fab fa-whatsapp" />
                         </div>
                     </section>
-
                     <footer className="text-center mt-8">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4"><i className="fas fa-qrcode mr-1"></i> Scan QR & Info</button>
-                        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"><i className="fas fa-qrcode mr-1"></i> SCAN QR ALL PAY KAIZELOFFC</button>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4" onClick={openQrModal}><i className="fas fa-qrcode mr-1"></i> ALL PAYMENT</button>
+                        
                     </footer>
                 </div>
             );
@@ -278,7 +368,7 @@
                         onComplete: () => {
                             gsap.to(button, {
                                 duration: 0.3,
-                                innerHTML: '<i className="fas fa-copy mr-1"></i> Copy',
+                                innerHTML: '<i class="fas fa-copy mr-1"></i> Copy',
                                 backgroundColor: "#3b82f6"
                             });
                         }
@@ -288,7 +378,8 @@
                     console.error('Gagal menyalin: ', err);
                     alert('Gagal menyalin nomor rekening.');
                 });
-      }
+        }
+
         particlesJS('particles-js', {
             particles: {
                 number: { value: 80, density: { enable: true, value_area: 800 } },
@@ -303,6 +394,7 @@
             retina_detect: true,
             config_demo: { hide_card: false, background_color: "#b61924", background_image: "", background_position: "50% 50%", background_repeat: "no-repeat", background_size: "cover" }
         });
+
         gsap.to(".parallax-background", {
             scrollTrigger: {
                 trigger: ".parallax",
@@ -314,16 +406,39 @@
             ease: "none"
         });
 
-        gsap.to(".parallax-foreground", {  // Animate the foreground layer too!
+        gsap.to(".parallax-foreground", {
             scrollTrigger: {
                 trigger: ".parallax",
                 start: "top bottom",
                 end: "bottom top",
                 scrub: true
             },
-            yPercent: 20,  // Adjust this value to control the speed relative to the background
+            yPercent: 20,
             ease: "none"
         });
+)
+        const imageModal = document.getElementById("imageModal");
+        const qrModal = document.getElementById("qrModal");
+        const imageModalClose = document.getElementById("imageModalClose");
+        const qrModalClose = document.getElementById("qrModalClose");
+
+        imageModalClose.onclick = function() {
+            imageModal.style.display = "none";
+        }
+
+        qrModalClose.onclick = function() {
+            qrModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == imageModal) {
+                imageModal.style.display = "none";
+            }
+            if (event.target == qrModal) {
+                qrModal.style.display = "none";
+            }
+        }
+
     </script>
 </body>
 </html>
